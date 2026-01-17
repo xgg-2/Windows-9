@@ -38,9 +38,11 @@ const PaintApp: React.FC = () => {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
         
-        const lastState = history[history.length - 1];
-        ctx.putImageData(lastState, 0, 0);
+        const prevState = history[history.length - 1];
+        ctx.putImageData(prevState, 0, 0);
         setHistory(prev => prev.slice(0, -1));
+        // Update snapshot to match current canvas state after undo
+        setSnapshot(ctx.getImageData(0, 0, canvas.width, canvas.height));
     };
 
     const floodFill = (startX: number, startY: number, fillColor: string) => {
