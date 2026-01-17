@@ -369,7 +369,10 @@ const Taskbar: React.FC = () => {
     </div>
 
     {/* Main Taskbar */}
-    <div className="absolute bottom-0 left-0 right-0 h-12 bg-[#141414]/90 backdrop-blur-xl border-t border-white/10 z-[5000] flex items-center px-1 select-none shadow-lg">
+    <div 
+      className="absolute bottom-0 left-0 right-0 h-12 backdrop-blur-xl border-t border-white/10 z-[5000] flex items-center px-1 select-none shadow-lg transition-colors duration-500"
+      style={{ backgroundColor: systemSettings.taskbarColor || '#141414e6' }}
+    >
       
       {/* Start Button */}
       <button
