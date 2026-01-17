@@ -93,6 +93,11 @@ const Desktop: React.FC = () => {
     e.dataTransfer.dropEffect = 'move';
   };
 
+  const handleRefresh = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setContextMenu({ ...contextMenu, visible: false });
+  };
+
   return (
     <div
       className="relative w-screen h-screen overflow-hidden bg-cover bg-center select-none transition-all duration-500"
