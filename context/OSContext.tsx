@@ -32,6 +32,7 @@ const INITIAL_FS: FileSystemItem[] = [
               ]},
               { name: 'Downloads', type: 'folder', children: [] },
               { name: 'Desktop', type: 'folder', children: [] },
+              { name: 'Pictures', type: 'folder', children: [] },
               { name: 'welcome.txt', type: 'file', content: 'Welcome to Windows 9 Professional!' }
             ]
           }
@@ -59,24 +60,40 @@ export const OSProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [globalZIndex, setGlobalZIndex] = useState(100);
   const [wallpaper, setWallpaper] = useState(WALLPAPER_URL);
   
-  // File System State - deeply nested object structure
-  const [fs, setFs] = useState<FileSystemItem[]>(INITIAL_FS);
-
-  const [systemSettings, setSystemSettings] = useState<SystemSettings>({
-    wifiEnabled: true,
-    bluetoothEnabled: true,
-    nightLight: false,
-    brightness: 100,
-    volume: 50,
-    userName: 'Admin User',
-    taskbarColor: '#ffffff1a',
-    theme: 'light'
+  // Load initial state from LocalStorage if available
+  const [fs, setFs] = useState<FileSystemItem[]>(() => {
+    const saved = localStorage.getItem('win9_fs');
+    return saved ? JSON.parse(saved) : INITIAL_FS;
   });
+
+  const [systemSettings, setSystemSettings] = useState<SystemSettings>(() => {
+    const saved = localStorage.getItem('win9_settings');
+    if (saved) return JSON.parse(saved);
+    return {
+        wifiEnabled: true,
+        bluetoothEnabled: true,
+        nightLight: false,
+        brightness: 100,
+        volume: 50,
+        userName: 'Admin User',
+        taskbarColor: '#ffffff1a',
+        theme: 'light'
+    };
+  });
+
+  // Persist FS to LocalStorage
+  useEffect(() => {
+    localStorage.setItem('win9_fs', JSON.stringify(fs));
+  }, [fs]);
+
+  // Persist Settings
+  useEffect(() => {
+    localStorage.setItem('win9_settings', JSON.stringify(systemSettings));
+  }, [systemSettings]);
 
   // --- File System Helpers ---
   
   const getPathArray = (path: string) => {
-     // Normalize path: C:/Users/Admin -> ['C:', 'Users', 'Admin']
      return path.split('/').filter(p => p && p !== 'root');
   };
 
@@ -111,21 +128,18 @@ export const OSProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, [fs]);
 
   const fsWriteFile = useCallback((path: string, content: string) => {
-      // Very basic implementation: recreates state to ensure immutability
       setFs(prev => {
-          const newFs = JSON.parse(JSON.stringify(prev)); // deep clone
+          const newFs = JSON.parse(JSON.stringify(prev));
           const parts = path.split('/').filter(p => p);
           const fileName = parts.pop();
           let current = newFs;
           
-          // Traverse
           for (const part of parts) {
               const folder = current.find((i: any) => i.name === part && i.type === 'folder');
-              if (!folder) return prev; // Path not found
+              if (!folder) return prev;
               current = folder.children;
           }
 
-          // Write/Overwrite
           const existing = current.find((i: any) => i.name === fileName);
           if (existing) {
               existing.content = content;
@@ -156,6 +170,44 @@ export const OSProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       });
   }, []);
 
+  const fsRename = useCallback((path: string, newName: string) => {
+    setFs(prev => {
+        const newFs = JSON.parse(JSON.stringify(prev));
+        const parts = path.split('/').filter(p => p);
+        const oldName = parts.pop();
+        let current = newFs;
+
+        for (const part of parts) {
+            const folder = current.find((i: any) => i.name === part && i.type === 'folder');
+            if (!folder) return prev;
+            current = folder.children;
+        }
+
+        const item = current.find((i: any) => i.name === oldName);
+        if (item) item.name = newName;
+        return newFs;
+    });
+  }, []);
+
+  const fsDelete = useCallback((path: string) => {
+    setFs(prev => {
+        const newFs = JSON.parse(JSON.stringify(prev));
+        const parts = path.split('/').filter(p => p);
+        const itemName = parts.pop();
+        let current = newFs;
+
+        for (const part of parts) {
+            const folder = current.find((i: any) => i.name === part && i.type === 'folder');
+            if (!folder) return prev;
+            current = folder.children;
+        }
+
+        const index = current.findIndex((i: any) => i.name === itemName);
+        if (index !== -1) current.splice(index, 1);
+        return newFs;
+    });
+  }, []);
+
   // --- Window Management ---
 
   const updateSystemSetting = useCallback(<K extends keyof SystemSettings>(key: K, value: SystemSettings[K]) => {
@@ -176,10 +228,6 @@ export const OSProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, [getNextZIndex]);
 
   const launchApp = useCallback((appId: AppId, args?: any) => {
-    // If args exist (like opening a specific file), we might want a NEW window even if app exists.
-    // But for Notepad, usually specific file means new window or tab. 
-    // For simplicity: unique app instance if args are present, otherwise singleton.
-    
     if (!args) {
         const existingWindow = windows.find((w) => w.appId === appId && !w.launchArgs);
         if (existingWindow) {
@@ -283,6 +331,8 @@ export const OSProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         fsWriteFile,
         fsMakeDir,
         fsReadDir,
+        fsRename,
+        fsDelete,
         isAssistantOpen,
         toggleAssistant
       }}

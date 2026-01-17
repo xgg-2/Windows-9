@@ -67,6 +67,8 @@ export interface OSContextType {
   fsWriteFile: (path: string, content: string) => void;
   fsMakeDir: (path: string) => void;
   fsReadDir: (path: string) => FileSystemItem[] | null;
+  fsRename: (path: string, newName: string) => void;
+  fsDelete: (path: string) => void;
 
   // Assistant
   isAssistantOpen: boolean;
