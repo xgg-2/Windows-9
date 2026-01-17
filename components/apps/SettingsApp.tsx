@@ -56,7 +56,7 @@ const SettingSection = ({ title, icon, children }: { title: string, icon: string
 // --- Main Component ---
 
 const SettingsApp: React.FC = () => {
-  const { setWallpaper, systemSettings, updateSystemSetting } = useOS();
+  const { setWallpaper, systemSettings, updateSystemSetting, wallpaper } = useOS();
   const [activeTab, setActiveTab] = useState('System');
   
   // Update State
@@ -157,7 +157,7 @@ const SettingsApp: React.FC = () => {
   };
 
   const playTestSound = () => {
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
       if (!AudioContext) return;
       
       const ctx = new AudioContext();
@@ -199,9 +199,7 @@ const SettingsApp: React.FC = () => {
       if (e.target.files && e.target.files[0]) {
           const reader = new FileReader();
           reader.onload = (ev) => setProfileImage(ev.target?.result as string);
-          reader.readAsText(e.target.files[0]); // Using readAsDataURL usually, but simulated environment
-          // Mock it for now since readAsDataURL might be blocked or complex in some envs
-          setProfileImage(URL.createObjectURL(e.target.files[0]));
+          reader.readAsDataURL(e.target.files[0]);
       }
   };
 
@@ -296,7 +294,6 @@ const SettingsApp: React.FC = () => {
                                         value={systemSettings.volume} 
                                         onChange={(e) => {
                                             updateSystemSetting('volume', parseInt(e.target.value));
-                                            // Play sound on drag end usually, but here on change is fine for 'active' feel
                                         }}
                                         onMouseUp={playTestSound}
                                         onTouchEnd={playTestSound}
@@ -482,7 +479,7 @@ const SettingsApp: React.FC = () => {
                                         {['#ffffff1a', '#0000004d', '#3b82f64d'].map(color => (
                                             <div 
                                                 key={color}
-                                                className={`w-10 h-10 rounded-full cursor-pointer border-2 ${systemSettings.taskbarColor === color ? 'border-blue-500' : 'border-gray-200'}`}
+                                                className={`w-10 h-10 rounded-full cursor-pointer border-2 ${(systemSettings as any).taskbarColor === color ? 'border-blue-500' : 'border-gray-200'}`}
                                                 style={{ backgroundColor: color }}
                                                 onClick={() => updateSystemSetting('taskbarColor' as any, color)}
                                             ></div>
@@ -495,7 +492,7 @@ const SettingsApp: React.FC = () => {
                                         <div className="text-xs text-gray-500">Switch between light and dark system themes</div>
                                     </div>
                                     <ToggleSwitch 
-                                        checked={systemSettings.theme === 'dark'} 
+                                        checked={(systemSettings as any).theme === 'dark'} 
                                         onChange={(val) => updateSystemSetting('theme' as any, val ? 'dark' : 'light')} 
                                     />
                                 </div>
@@ -571,89 +568,63 @@ const SettingsApp: React.FC = () => {
                                         type="text" 
                                         value={systemSettings.userName} 
                                         onChange={(e) => updateSystemSetting('userName', e.target.value)}
-                                        className="font-bold text-xl text-gray-900 border-b border-transparent hover:border-gray-300 focus:border-blue-500 outline-none bg-transparent"
+                                        className="text-2xl font-semibold bg-transparent border-none outline-none focus:ring-2 focus:ring-blue-500/20 rounded px-1 w-full"
                                      />
                                      <i className="fas fa-pen text-xs text-gray-400"></i>
                                  </div>
-                                 <div className="text-sm text-gray-500">Administrator</div>
-                                 <div className="text-sm text-gray-500">Local Account</div>
+                                 <div className="text-sm text-gray-500 flex items-center gap-2">
+                                     <span>Administrator</span>
+                                     <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                     <span>Local Account</span>
+                                 </div>
                              </div>
                          </div>
-                         
+
                          <div className="bg-white border rounded-lg divide-y">
-                             <div className="p-4 hover:bg-gray-50 cursor-pointer flex justify-between items-center">
+                             <div className="p-4 flex items-center justify-between hover:bg-gray-50 cursor-pointer">
                                  <div className="flex items-center gap-3">
                                      <i className="fas fa-key text-gray-400 w-5"></i>
-                                     <span className="text-sm font-medium">Sign-in options</span>
+                                     <span className="text-sm">Sign-in options</span>
                                  </div>
-                                 <i className="fas fa-chevron-right text-gray-400 text-xs"></i>
+                                 <i className="fas fa-chevron-right text-xs text-gray-300"></i>
                              </div>
-                             <div className="p-4 hover:bg-gray-50 cursor-pointer flex justify-between items-center">
+                             <div className="p-4 flex items-center justify-between hover:bg-gray-50 cursor-pointer">
                                  <div className="flex items-center gap-3">
                                      <i className="fas fa-users text-gray-400 w-5"></i>
-                                     <span className="text-sm font-medium">Family & other users</span>
+                                     <span className="text-sm">Family & other users</span>
                                  </div>
-                                 <i className="fas fa-chevron-right text-gray-400 text-xs"></i>
+                                 <i className="fas fa-chevron-right text-xs text-gray-300"></i>
                              </div>
                          </div>
                     </div>
                 )}
 
                 {activeTab === 'Update' && (
-                    <div className="space-y-6">
-                        <div className="bg-white border rounded-lg p-6">
-                            <div className="flex items-start gap-4 mb-6">
-                                    <div className="mt-1">
-                                    {checkingUpdate ? (
-                                        <i className="fas fa-sync fa-spin text-2xl text-blue-600"></i>
-                                    ) : (
-                                        <i className="fas fa-check-circle text-2xl text-green-600"></i>
-                                    )}
-                                    </div>
-                                    <div className="flex-1">
-                                        <h2 className="text-xl font-medium mb-1 text-gray-800">{updateStatus}</h2>
-                                        <div className="text-xs text-gray-500 mb-4">Last checked: Today, {new Date().toLocaleTimeString()}</div>
-                                        
-                                        {checkingUpdate && (
-                                            <div className="w-full h-1 bg-gray-100 rounded-full overflow-hidden mb-4">
-                                                <div className="h-full bg-blue-600 transition-all duration-300" style={{ width: `${updateProgress}%` }}></div>
-                                            </div>
-                                        )}
-
-                                        <button 
-                                            className="bg-blue-600 text-white px-5 py-2 rounded-md text-sm hover:bg-blue-700 active:scale-95 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
-                                            onClick={handleCheckUpdate}
-                                            disabled={checkingUpdate}
-                                        >
-                                            {checkingUpdate ? 'Checking...' : 'Check for updates'}
-                                        </button>
-                                    </div>
-                            </div>
-                            <div className="bg-blue-50 rounded p-3 flex gap-3 items-start">
-                                <i className="fas fa-info-circle text-blue-600 mt-0.5"></i>
-                                <div className="text-sm text-blue-800">
-                                    <div className="font-semibold mb-1">Windows 9 Feature Update (26H2)</div>
-                                    <p>Coming soon. Get ready for new features and security improvements.</p>
-                                </div>
-                            </div>
+                    <div className="bg-white border rounded-lg p-8 flex flex-col items-center text-center space-y-6">
+                        <div className="relative">
+                            <i className={`fas ${checkingUpdate ? 'fa-sync fa-spin text-blue-500' : 'fa-check-circle text-green-500'} text-6xl`}></i>
                         </div>
-
-                        <div className="bg-white border rounded-lg divide-y">
-                             <div className="p-4 hover:bg-gray-50 cursor-pointer flex justify-between items-center">
-                                 <span className="text-sm font-medium">Update history</span>
-                                 <i className="fas fa-chevron-right text-xs text-gray-400"></i>
-                             </div>
-                             <div className="p-4 hover:bg-gray-50 cursor-pointer flex justify-between items-center">
-                                 <span className="text-sm font-medium">Advanced options</span>
-                                 <i className="fas fa-chevron-right text-xs text-gray-400"></i>
-                             </div>
-                             <div className="p-4 hover:bg-gray-50 cursor-pointer flex justify-between items-center">
-                                 <span className="text-sm font-medium">Windows Insider Program</span>
-                                 <i className="fas fa-chevron-right text-xs text-gray-400"></i>
-                             </div>
+                        <div>
+                            <h2 className="text-2xl font-medium">{updateStatus}</h2>
+                            <p className="text-sm text-gray-500 mt-1">Last checked: Today, {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
                         </div>
+                        
+                        {checkingUpdate && (
+                            <div className="w-full max-w-xs h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                <div className="h-full bg-blue-600 transition-all duration-300" style={{ width: `${updateProgress}%` }}></div>
+                            </div>
+                        )}
+
+                        <button 
+                            onClick={handleCheckUpdate}
+                            disabled={checkingUpdate}
+                            className={`px-6 py-2 rounded-md font-medium transition-all ${checkingUpdate ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md'}`}
+                        >
+                            Check for updates
+                        </button>
                     </div>
                 )}
+
                 </div>
             </div>
         </div>
