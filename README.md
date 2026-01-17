@@ -45,6 +45,7 @@ Follow the steps below to initialize the project locally.
 ```bash
 git clone https://github.com/xgg-2/windows-9.git
 cd windows-9
+```
 
 2. Install Dependencies
 
