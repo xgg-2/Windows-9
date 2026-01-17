@@ -1,4 +1,4 @@
-export type AppId = 'pc' | 'browser' | 'calc' | 'notepad' | 'settings' | 'terminal' | 'paint' | 'sysinfo' | 'worm' | 'dream';
+export type AppId = 'pc' | 'browser' | 'calc' | 'notepad' | 'settings' | 'terminal' | 'paint' | 'sysinfo' | 'worm' | 'chrono';
 
 export interface AppConfig {
   id: AppId;

@@ -73,13 +73,13 @@ export const APPS: Record<AppId, AppConfig> = {
     preferredWidth: 400,
     preferredHeight: 480,
   },
-  dream: {
-    id: 'dream',
-    title: 'Dream Weaver',
-    icon: 'fa-cloud-moon',
-    color: 'bg-indigo-600',
-    preferredWidth: 400,
-    preferredHeight: 550,
+  chrono: {
+    id: 'chrono',
+    title: 'Chrono Nexus',
+    icon: 'fa-atom',
+    color: 'bg-cyan-900',
+    preferredWidth: 450,
+    preferredHeight: 600,
   }
 };
 
