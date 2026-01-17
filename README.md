@@ -1,41 +1,109 @@
-Windows 9 Simulator
+
+# Windows 9 Simulator
+
 A technical web-based project designed to replicate the aesthetic and functional experience of a desktop operating system within a modern web browser.
-Developed by: xgg.2
+
+Developed by: **xgg.2**
+
+---
+
+## Preview
+
+![Windows 9 Simulator Preview 1](https://i.imgur.com/tXktLco.jpeg)
+![Windows 9 Simulator Preview 2](https://i.imgur.com/8UkfZTP.jpeg)
+![Windows 9 Simulator Preview 3](https://i.imgur.com/2regheZ.jpeg)
+
+---
+
 > [!IMPORTANT]
-> Preliminary Version: This project is in its early stages. It serves as a technical foundation for testing architectural patterns and UI/UX experimentation.
-> 
-Key Features
-User Interface
- * Retro-Modern Interface: A calculated blend of classic OS design principles and contemporary web technologies.
- * Desktop Environment: Includes a functional taskbar, system start menu, and interactive desktop iconography.
-Technical Architecture
- * Extensible Framework: Developed as an open sandbox, allowing for seamless customization and module integration.
- * Responsive Core: Optimized for simulating system-level interactions across varying display dimensions and devices.
-Installation and Setup
-Follow these technical requirements to initialize the project in your local development environment.
-1. Clone the Repository
-git clone [https://github.com/xgg-2/windows-9.git](https://github.com/xgg-2/windows-9.git)
+> **Preliminary Version**  
+> This project is in its early stages. It serves as a technical foundation for testing architectural patterns and UI/UX experimentation.
+
+---
+
+## Key Features
+
+### User Interface
+- **Retro-Modern Interface**  
+  A calculated blend of classic operating system design principles and contemporary web technologies.
+- **Desktop Environment**  
+  Includes a functional taskbar, system start menu, and interactive desktop iconography.
+
+### Technical Architecture
+- **Extensible Framework**  
+  Developed as an open sandbox, allowing seamless customization and module integration.
+- **Responsive Core**  
+  Optimized for simulating system-level interactions across different screen sizes and devices.
+
+---
+
+## Installation and Setup
+
+Follow the steps below to initialize the project locally.
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/xgg-2/windows-9.git
 cd windows-9
 
-2. Dependency Management
-Ensure that Node.js is installed on your system. Execute the following command to install necessary packages:
-`npm install`
+2. Install Dependencies
 
-3. Execution
-To launch the local development serve run:
-`npm run dev`
+Make sure Node.js is installed, then run:
 
-The application will be accessible via the local address provided in the terminal (default: http://localhost:5173).
+npm install
+
+3. Run the Project
+
+npm run dev
+
+The application will be available at:
+http://localhost:5173
+
+
+---
+
 Development Roadmap
-This project is intended for rigorous technical experimentation. Current development focus includes:
- * State Management: Refining UI component logic and global state handling.
- * System Utilities: Integrating new applications and desktop tools.
- * File Systems: Implementing simulated file system protocols and data persistence.
- * Interaction Logic: Enhancing window management systems and keyboard event handling.
+
+This project is intended for deep technical experimentation. Current focus areas include:
+
+State Management
+Refining UI component logic and global state handling.
+
+System Utilities
+Integrating additional desktop applications and tools.
+
+File Systems
+Implementing simulated file system protocols and data persistence.
+
+Interaction Logic
+Enhancing window management and keyboard/mouse event handling.
+
+
+
+---
+
 Project Status
- * Functional Limitations: Certain UI elements are currently implemented as placeholders and may lack full interactivity.
- * Codebase Stability: The architecture is subject to significant changes as more robust features are integrated.
- * Contribution: Technical feedback and pull requests are encouraged to improve system stability and performance.
+
+Functional Limitations
+Some UI components are placeholders and may lack full interactivity.
+
+Codebase Stability
+Architecture is subject to change as new features are introduced.
+
+Contributions
+Feedback, issues, and pull requests are welcome to improve stability and performance.
+
+
+
+---
+
 License
-This project is released as open-source software. Users are permitted to modify, distribute, and build upon this codebase for educational or development purposes.
-Windows 9 Simulator: Exploring OS Design via Web Technologies.
+
+This project is released as open-source software.
+You are free to modify, distribute, and build upon it for educational or development purposes.
+
+
+---
+
+Windows 9 Simulator
+Exploring Operating System Design via Modern Web Technologies
