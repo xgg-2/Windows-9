@@ -19,6 +19,9 @@ const App: React.FC = () => {
           from { opacity: 0; transform: scale(0.95); }
           to { opacity: 1; transform: scale(1); }
         }
+        .animate-popIn {
+            animation: popIn 0.1s ease-out;
+        }
         @keyframes slide-up {
           from { opacity: 0; transform: translateY(20px) scale(0.95); }
           to { opacity: 1; transform: translateY(0) scale(1); }

@@ -14,6 +14,62 @@ const PCApp: React.FC<PCAppProps> = () => {
   const [selectedItemName, setSelectedItemName] = useState<string | null>(null);
   const [renamingItem, setRenamingItem] = useState<string | null>(null);
   const [newName, setNewName] = useState('');
+  const [selection, setSelection] = useState<{ startX: number; startY: number; endX: number; endY: number } | null>(null);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest('.file-item')) return;
+    setSelection({ startX: e.clientX, startY: e.clientY, endX: e.clientX, endY: e.clientY });
+    setSelectedItems([]);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (selection) {
+        setSelection({ ...selection, endX: e.clientX, endY: e.clientY });
+        const rect = {
+            left: Math.min(selection.startX, e.clientX),
+            top: Math.min(selection.startY, e.clientY),
+            right: Math.max(selection.startX, e.clientX),
+            bottom: Math.max(selection.startY, e.clientY)
+        };
+        const newlySelected: string[] = [];
+        document.querySelectorAll('.file-item').forEach(item => {
+            const itemRect = item.getBoundingClientRect();
+            const name = item.getAttribute('data-name');
+            if (name &&
+                itemRect.left < rect.right &&
+                itemRect.right > rect.left &&
+                itemRect.top < rect.bottom &&
+                itemRect.bottom > rect.top
+            ) {
+                newlySelected.push(name);
+            }
+        });
+        setSelectedItems(newlySelected);
+    }
+  };
+
+  const handleMouseUp = () => setSelection(null);
+
+  const handleDragStart = (e: React.DragEvent, name: string) => {
+    e.dataTransfer.setData('application/win9-file', JSON.stringify({ name, path: currentPath }));
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDrop = (e: React.DragEvent, targetFolder?: string) => {
+    e.preventDefault();
+    const data = e.dataTransfer.getData('application/win9-file');
+    if (data) {
+        const { name, path } = JSON.parse(data);
+        if (targetFolder && targetFolder !== name) {
+            // Logic for moving file to targetFolder
+            const oldPath = `${path}/${name}`;
+            const newPath = `${currentPath}/${targetFolder}/${name}`;
+            // For now just simulate move via rename/delete sequence if context allowed
+            alert(`Moving ${name} to ${targetFolder}`);
+        }
+    }
+  };
   
   // Drives are "roots" in our logic for now
   const drives = [
@@ -190,7 +246,23 @@ const PCApp: React.FC<PCAppProps> = () => {
           </div>
 
           {/* Main View */}
-          <div className="flex-1 p-2 overflow-y-auto">
+          <div 
+            className="flex-1 p-2 overflow-y-auto relative"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+          >
+              {selection && (
+                  <div 
+                    className="absolute border border-blue-500 bg-blue-500/20 z-50 pointer-events-none"
+                    style={{
+                        left: Math.min(selection.startX, selection.endX) - (document.querySelector('.pc-main-view')?.getBoundingClientRect().left || 0),
+                        top: Math.min(selection.startY, selection.endY) - (document.querySelector('.pc-main-view')?.getBoundingClientRect().top || 0),
+                        width: Math.abs(selection.endX - selection.startX),
+                        height: Math.abs(selection.endY - selection.startY)
+                    }}
+                  />
+              )}
               {currentPath === 'root' ? (
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                       {drives.map(drive => (
@@ -216,7 +288,14 @@ const PCApp: React.FC<PCAppProps> = () => {
                     {items.map(item => (
                         <div 
                             key={item.name}
-                            className={`flex flex-col items-center p-2 border border-transparent rounded hover:bg-blue-50 hover:border-blue-200 cursor-pointer group ${selectedItemName === item.name ? 'bg-blue-100 border-blue-300' : ''}`}
+                            data-name={item.name}
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, item.name)}
+                            onDragOver={(e) => item.type === 'folder' && e.preventDefault()}
+                            onDrop={(e) => item.type === 'folder' && handleDrop(e, item.name)}
+                            className={`file-item flex flex-col items-center p-2 border border-transparent rounded hover:bg-blue-50 hover:border-blue-200 cursor-pointer group 
+                                ${selectedItemName === item.name || selectedItems.includes(item.name) ? 'bg-blue-100 border-blue-300' : ''}
+                            `}
                             onClick={(e) => { e.stopPropagation(); setSelectedItemName(item.name); }}
                             onDoubleClick={(e) => { e.stopPropagation(); handleItemDoubleClick(item); }}
                         >

@@ -12,36 +12,109 @@ const Desktop: React.FC = () => {
   const shortcuts: AppId[] = ['pc', 'browser', 'notepad', 'calc', 'settings', 'terminal', 'paint', 'sysinfo', 'worm'];
   
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; visible: boolean; submenu: string | null }>({ x: 0, y: 0, visible: false, submenu: null });
+  const [selection, setSelection] = useState<{ startX: number; startY: number; endX: number; endY: number } | null>(null);
+  const [selectedIds, setSelectedIds] = useState<AppId[]>([]);
+  const [draggedId, setDraggedId] = useState<AppId | null>(null);
+  const [iconPositions, setIconPositions] = useState<Record<string, { x: number; y: number }>>({});
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
-    // Prevent overflow
     const x = Math.min(e.clientX, window.innerWidth - 200);
     const y = Math.min(e.clientY, window.innerHeight - 300);
     setContextMenu({ x, y, visible: true, submenu: null });
     closeStartMenu();
   };
 
-  const handleDesktopClick = () => {
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0) return;
+    if ((e.target as HTMLElement).closest('button')) return;
+    
+    setSelection({ startX: e.clientX, startY: e.clientY, endX: e.clientX, endY: e.clientY });
+    setSelectedIds([]);
     if (contextMenu.visible) {
         setContextMenu({ ...contextMenu, visible: false, submenu: null });
     }
     closeStartMenu();
   };
 
-  const handleRefresh = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    // Simulate refresh with a brief flicker or just closing menu
-    setContextMenu({ ...contextMenu, visible: false });
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (selection) {
+      setSelection({ ...selection, endX: e.clientX, endY: e.clientY });
+      
+      // Basic selection logic
+      const rect = {
+        left: Math.min(selection.startX, e.clientX),
+        top: Math.min(selection.startY, e.clientY),
+        right: Math.max(selection.startX, e.clientX),
+        bottom: Math.max(selection.startY, e.clientY)
+      };
+
+      const newlySelected: AppId[] = [];
+      const buttons = document.querySelectorAll('.desktop-icon');
+      buttons.forEach(btn => {
+          const btnRect = btn.getBoundingClientRect();
+          const appId = btn.getAttribute('data-id') as AppId;
+          if (
+              btnRect.left < rect.right &&
+              btnRect.right > rect.left &&
+              btnRect.top < rect.bottom &&
+              btnRect.bottom > rect.top
+          ) {
+              newlySelected.push(appId);
+          }
+      });
+      setSelectedIds(newlySelected);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setSelection(null);
+  };
+
+  const handleDragStart = (e: React.DragEvent, id: AppId) => {
+    setDraggedId(id);
+    e.dataTransfer.setData('text/plain', id);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (draggedId) {
+        setIconPositions(prev => ({
+            ...prev,
+            [draggedId]: { x: e.clientX - 42, y: e.clientY - 42 }
+        }));
+    }
+    setDraggedId(null);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
   };
 
   return (
     <div
       className="relative w-screen h-screen overflow-hidden bg-cover bg-center select-none transition-all duration-500"
       style={{ backgroundImage: `url(${wallpaper})` }}
-      onClick={handleDesktopClick}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
       onContextMenu={handleContextMenu}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
     >
+      {selection && (
+          <div 
+            className="absolute border border-blue-500 bg-blue-500/30 z-[5500] pointer-events-none"
+            style={{
+                left: Math.min(selection.startX, selection.endX),
+                top: Math.min(selection.startY, selection.endY),
+                width: Math.abs(selection.endX - selection.startX),
+                height: Math.abs(selection.endY - selection.startY)
+            }}
+          />
+      )}
       {/* Night Light Overlay */}
       {systemSettings.nightLight && (
         <div className="absolute inset-0 bg-orange-500 mix-blend-multiply opacity-20 pointer-events-none z-[9990]"></div>
@@ -58,12 +131,17 @@ const Desktop: React.FC = () => {
         {shortcuts.map((id) => (
           <button
             key={id}
-            className="w-[84px] py-2 flex flex-col items-center gap-1 rounded hover:bg-white/10 active:bg-white/20 border border-transparent hover:border-white/10 transition group text-shadow-sm focus:bg-white/20 focus:border-white/20 outline-none"
+            data-id={id}
+            draggable
+            onDragStart={(e) => handleDragStart(e, id)}
+            className={`desktop-icon w-[84px] py-2 flex flex-col items-center gap-1 rounded hover:bg-white/10 active:bg-white/20 border border-transparent hover:border-white/10 transition group text-shadow-sm focus:bg-white/20 focus:border-white/20 outline-none
+                ${selectedIds.includes(id) ? 'bg-white/20 border-white/20' : ''}
+            `}
+            style={iconPositions[id] ? { position: 'absolute', left: iconPositions[id].x, top: iconPositions[id].y } : {}}
             onClick={(e) => { 
               e.stopPropagation();
               launchApp(id);
             }}
-            // Support single touch for mobile
             onTouchEnd={() => {
                 launchApp(id);
             }}
