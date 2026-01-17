@@ -73,13 +73,13 @@ export const APPS: Record<AppId, AppConfig> = {
     preferredWidth: 400,
     preferredHeight: 480,
   },
-  chrono: {
-    id: 'chrono',
-    title: 'Chrono Nexus',
-    icon: 'fa-atom',
-    color: 'bg-cyan-900',
-    preferredWidth: 450,
-    preferredHeight: 600,
+  vault: {
+    id: 'vault',
+    title: 'Mind Vault',
+    icon: 'fa-user-shield',
+    color: 'bg-neutral-800',
+    preferredWidth: 400,
+    preferredHeight: 500,
   }
 };
 

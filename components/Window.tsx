@@ -13,7 +13,7 @@ import TerminalApp from './apps/TerminalApp';
 import PaintApp from './apps/PaintApp';
 import SystemInfoApp from './apps/SystemInfoApp';
 import WormApp from './apps/WormApp';
-import ChronoNexus from './apps/ChronoNexus';
+import MindVault from './apps/MindVault';
 
 interface WindowProps {
   windowState: WindowState;
@@ -153,7 +153,7 @@ const Window: React.FC<WindowProps> = ({ windowState }) => {
       case 'paint': return <PaintApp />;
       case 'sysinfo': return <SystemInfoApp />;
       case 'worm': return <WormApp />;
-      case 'chrono': return <ChronoNexus />;
+      case 'vault': return <MindVault />;
       default: return <div className="p-4">Unknown App</div>;
     }
   };
