@@ -14,7 +14,7 @@ Technical Architecture
 Installation and Setup
 Follow these technical requirements to initialize the project in your local development environment.
 1. Clone the Repository
-```bash
+`bash
 git clone [https://github.com/xgg-2/windows-9.git](https://github.com/xgg-2/windows-9.git)
 cd windows-9
 
