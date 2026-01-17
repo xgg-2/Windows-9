@@ -190,25 +190,25 @@ const Window: React.FC<WindowProps> = ({ windowState }) => {
 
       {/* Title Bar */}
       <div
-        className={`h-9 bg-[#f3f3f3] border-b border-gray-300 flex items-center justify-between px-3 select-none flex-shrink-0 ${!isMaximized ? 'rounded-t-lg' : ''}`}
+        className={`h-9 bg-[#f3f3f3] border-b border-gray-300 flex items-center justify-between pl-3 pr-0 select-none flex-shrink-0 ${!isMaximized ? 'rounded-t-lg' : ''}`}
         onMouseDown={handleMouseDown}
         onTouchStart={handleMouseDown}
         style={{ cursor: isMaximized ? 'default' : 'default' }}
       >
-        <div className="flex items-center gap-2 pointer-events-none opacity-80 pl-1">
+        <div className="flex items-center gap-2 pointer-events-none opacity-80">
           <i className={`fas ${config.icon} text-xs text-blue-600`}></i>
           <span className="text-xs font-semibold text-gray-800">{title}</span>
         </div>
-        <div className="flex h-full items-center gap-1 z-50">
+        <div className="flex h-full items-center z-50">
           <button
-            className="w-10 h-full flex items-center justify-center hover:bg-gray-300 transition"
+            className="w-12 h-full flex items-center justify-center hover:bg-gray-200 transition"
             onClick={(e) => { e.stopPropagation(); toggleMinimize(id); }}
             title="Minimize"
           >
             <div className="w-2.5 h-0.5 bg-black"></div>
           </button>
           <button
-            className="w-10 h-full flex items-center justify-center hover:bg-gray-300 transition"
+            className="w-12 h-full flex items-center justify-center hover:bg-gray-200 transition"
             onClick={(e) => { e.stopPropagation(); toggleMaximize(id); }}
             title="Maximize"
           >
@@ -223,7 +223,7 @@ const Window: React.FC<WindowProps> = ({ windowState }) => {
             onClick={(e) => { e.stopPropagation(); closeWindow(id); }}
             title="Close"
           >
-            <i className="fas fa-times text-[17px] mt-[1px]"></i>
+            <i className="fas fa-times text-[17px]"></i>
           </button>
         </div>
       </div>
