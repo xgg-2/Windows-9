@@ -14,7 +14,6 @@ Technical Architecture
 Installation and Setup
 Follow these technical requirements to initialize the project in your local development environment.
 1. Clone the Repository
-`bash
 git clone [https://github.com/xgg-2/windows-9.git](https://github.com/xgg-2/windows-9.git)
 cd windows-9
 
@@ -23,8 +22,8 @@ Ensure that Node.js is installed on your system. Execute the following command t
 `npm install`
 
 3. Execution
-To launch the local development serve `run:
-npm run dev`
+To launch the local development serve run:
+`npm run dev`
 
 The application will be accessible via the local address provided in the terminal (default: http://localhost:5173).
 Development Roadmap
