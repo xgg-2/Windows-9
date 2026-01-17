@@ -50,8 +50,10 @@ const Desktop: React.FC = () => {
           <button
             key={id}
             className="w-[84px] py-2 flex flex-col items-center gap-1 rounded hover:bg-white/10 active:bg-white/20 border border-transparent hover:border-white/10 transition group text-shadow-sm focus:bg-white/20 focus:border-white/20 outline-none"
-            onClick={(e) => { e.stopPropagation(); }}
-            onDoubleClick={() => launchApp(id)}
+            onClick={(e) => { 
+              e.stopPropagation();
+              launchApp(id);
+            }}
             // Support single touch for mobile
             onTouchEnd={() => {
                 launchApp(id);
