@@ -6,7 +6,7 @@ interface LockScreenProps {
 }
 
 const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
-  const { systemSettings } = useOS();
+  const { systemSettings, wallpaper } = useOS();
   const [time, setTime] = useState(new Date());
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [password, setPassword] = useState('');
@@ -18,7 +18,6 @@ const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
 
   const handleUnlock = (e?: React.FormEvent) => {
     e?.preventDefault();
-    // For now, no password required or just click
     onUnlock();
   };
 
@@ -28,7 +27,7 @@ const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
   return (
     <div 
       className="fixed inset-0 z-[10000] bg-cover bg-center flex flex-col items-center justify-between p-12 text-white select-none transition-all duration-700 animate-popIn"
-      style={{ backgroundImage: `url(https://images.unsplash.com/photo-1519501025264-658c15403220?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80)` }}
+      style={{ backgroundImage: `url(${wallpaper})` }}
       onClick={() => !isLoggingIn && setIsLoggingIn(true)}
       onKeyDown={(e) => {
         if (e.key === ' ' || e.key === 'Enter') {

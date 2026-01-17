@@ -58,7 +58,10 @@ export const OSProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [globalZIndex, setGlobalZIndex] = useState(100);
-  const [wallpaper, setWallpaper] = useState(WALLPAPER_URL);
+  const [wallpaper, setWallpaper] = useState(() => {
+    const saved = localStorage.getItem('win9_wallpaper');
+    return saved || WALLPAPER_URL;
+  });
   
   // Load initial state from LocalStorage if available
   const [fs, setFs] = useState<FileSystemItem[]>(() => {
@@ -80,6 +83,11 @@ export const OSProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         theme: 'light'
     };
   });
+
+  // Persist Wallpaper
+  useEffect(() => {
+    localStorage.setItem('win9_wallpaper', wallpaper);
+  }, [wallpaper]);
 
   // Persist FS to LocalStorage
   useEffect(() => {
