@@ -9,7 +9,7 @@ import { AppId } from '../types';
 
 const Desktop: React.FC = () => {
   const { windows, launchApp, closeStartMenu, wallpaper, systemSettings } = useOS();
-  const shortcuts: AppId[] = ['pc', 'browser', 'notepad', 'calc', 'settings', 'terminal', 'paint', 'sysinfo', 'worm'];
+  const shortcuts: AppId[] = ['pc', 'browser', 'notepad', 'calc', 'settings', 'terminal', 'paint', 'sysinfo', 'worm', 'dream'];
   
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; visible: boolean; submenu: string | null }>({ x: 0, y: 0, visible: false, submenu: null });
   const [selection, setSelection] = useState<{ startX: number; startY: number; endX: number; endY: number } | null>(null);
