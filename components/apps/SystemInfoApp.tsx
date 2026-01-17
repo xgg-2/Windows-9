@@ -83,8 +83,12 @@ const SystemInfoApp: React.FC = () => {
 
          <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm mb-6">
              <h2 className="text-sm font-bold text-gray-800 mb-2">Developer Information</h2>
-             <div className="text-xs text-gray-700 font-medium">
-                 The intellectual property rights of the developer who developed the system are xgg.2
+             <div className="text-xs text-gray-700 font-medium space-y-2">
+                 <div>The intellectual property rights of the developer who developed the system are xgg.2</div>
+                 <div className="pt-2 border-t border-gray-100 flex items-center gap-2">
+                     <i className="fab fa-github text-sm text-gray-800"></i>
+                     <a href="https://github.com/xgg-2/windows-9" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">View Source on GitHub</a>
+                 </div>
              </div>
          </div>
     </div>

@@ -24,6 +24,9 @@ const StartMenu: React.FC = () => {
       <div className="w-12 bg-black/40 flex flex-col items-center py-4 gap-4 flex-shrink-0">
         <div className="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-xs font-bold text-black cursor-pointer hover:ring-2 ring-white/50 transition" title="User">U</div>
         <div className="flex-1"></div>
+        <a href="https://github.com/xgg-2/windows-9" target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-white/10 rounded-md transition text-gray-300 hover:text-white" title="GitHub Repository">
+          <i className="fab fa-github"></i>
+        </a>
         <button className="p-2 hover:bg-white/10 rounded-md transition text-gray-300 hover:text-white" title="Settings" onClick={() => launchApp('settings')}>
           <i className="fas fa-cog"></i>
         </button>
