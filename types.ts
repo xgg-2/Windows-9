@@ -30,6 +30,8 @@ export interface SystemSettings {
   brightness: number; // 0-100
   volume: number; // 0-100
   userName: string;
+  taskbarColor: string;
+  theme: 'light' | 'dark';
 }
 
 // Virtual File System Types

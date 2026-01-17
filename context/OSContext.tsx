@@ -68,7 +68,9 @@ export const OSProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     nightLight: false,
     brightness: 100,
     volume: 50,
-    userName: 'Admin User'
+    userName: 'Admin User',
+    taskbarColor: '#ffffff1a',
+    theme: 'light'
   });
 
   // --- File System Helpers ---

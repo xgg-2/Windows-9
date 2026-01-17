@@ -460,44 +460,47 @@ const SettingsApp: React.FC = () => {
 
                 {activeTab === 'Personalization' && (
                     <div className="space-y-6">
-                         <div className="bg-white border rounded-lg p-4">
-                             <h3 className="font-medium mb-3 text-sm">Select a theme to apply</h3>
-                             <div className="grid grid-cols-3 gap-3">
-                                {WALLPAPERS.slice(0, 3).map((wp, i) => (
-                                    <div key={i} className="cursor-pointer group relative" onClick={() => setWallpaper(wp.url)}>
-                                        <div className="aspect-video rounded-md overflow-hidden ring-2 ring-transparent group-hover:ring-blue-500 transition-all">
-                                            <img src={wp.url} alt="Theme" className="w-full h-full object-cover" />
-                                        </div>
-                                        <div className="text-xs mt-1.5 text-center font-medium text-gray-600">{wp.name}</div>
-                                        {/* Checkmark if current (simulated logic for first item) */}
+                        <SettingSection title="Wallpaper" icon="fa-image">
+                            <div className="grid grid-cols-3 gap-3">
+                                {WALLPAPERS.map((wp, idx) => (
+                                    <div 
+                                        key={idx} 
+                                        className={`aspect-video rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${wallpaper === wp.url ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-transparent hover:border-gray-300'}`}
+                                        onClick={() => setWallpaper(wp.url)}
+                                    >
+                                        <img src={wp.url} alt={wp.name} className="w-full h-full object-cover" />
                                     </div>
                                 ))}
-                             </div>
-                         </div>
-                         
-                         <div className="bg-white border rounded-lg p-4">
-                             <h3 className="font-medium mb-3 text-sm">Recent images</h3>
-                             <div className="grid grid-cols-4 gap-2">
-                                 {WALLPAPERS.map((wp, idx) => (
-                                     <div key={idx} className="aspect-square rounded-md overflow-hidden cursor-pointer hover:opacity-80 ring-1 ring-gray-200" onClick={() => setWallpaper(wp.url)}>
-                                         <img src={wp.url} alt={wp.name} className="w-full h-full object-cover" />
-                                     </div>
-                                 ))}
-                             </div>
-                             <button className="mt-4 w-full py-2 border border-dashed border-gray-300 rounded text-sm text-gray-500 hover:bg-gray-50">Browse photos</button>
-                         </div>
+                            </div>
+                        </SettingSection>
 
-                         <div className="bg-white border rounded-lg p-4 flex items-center justify-between">
-                             <div>
-                                 <h3 className="font-medium text-sm">Accent color</h3>
-                                 <div className="text-xs text-gray-500">Manual</div>
-                             </div>
-                             <div className="flex gap-2">
-                                 {['bg-blue-600', 'bg-purple-600', 'bg-orange-500', 'bg-red-500', 'bg-green-600'].map(c => (
-                                     <div key={c} className={`w-6 h-6 rounded-full cursor-pointer ${c} ring-2 ring-offset-2 ring-transparent hover:ring-gray-300`}></div>
-                                 ))}
-                             </div>
-                         </div>
+                        <SettingSection title="Theme & Color" icon="fa-palette">
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="text-sm font-medium block mb-2">Taskbar Transparency</label>
+                                    <div className="flex gap-2">
+                                        {['#ffffff1a', '#0000004d', '#3b82f64d'].map(color => (
+                                            <div 
+                                                key={color}
+                                                className={`w-10 h-10 rounded-full cursor-pointer border-2 ${systemSettings.taskbarColor === color ? 'border-blue-500' : 'border-gray-200'}`}
+                                                style={{ backgroundColor: color }}
+                                                onClick={() => updateSystemSetting('taskbarColor' as any, color)}
+                                            ></div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-between py-2 border-t">
+                                    <div>
+                                        <div className="text-sm font-medium">Dark Mode</div>
+                                        <div className="text-xs text-gray-500">Switch between light and dark system themes</div>
+                                    </div>
+                                    <ToggleSwitch 
+                                        checked={systemSettings.theme === 'dark'} 
+                                        onChange={(val) => updateSystemSetting('theme' as any, val ? 'dark' : 'light')} 
+                                    />
+                                </div>
+                            </div>
+                        </SettingSection>
                     </div>
                 )}
                 
