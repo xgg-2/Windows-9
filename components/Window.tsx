@@ -229,7 +229,7 @@ const Window: React.FC<WindowProps> = ({ windowState }) => {
       </div>
       
       {/* App Body - Removed overflow-hidden to allow menus to popup over window borders */}
-      <div className={`flex-1 relative bg-white ${!isMaximized ? 'rounded-b-lg' : ''}`}>
+      <div className={`flex-1 relative bg-white overflow-auto ${!isMaximized ? 'rounded-b-lg' : ''}`}>
         {renderAppContent()}
       </div>
     </div>

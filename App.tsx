@@ -30,15 +30,30 @@ const App: React.FC = () => {
             text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
         /* Custom scrollbar for menu */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.2);
-            border-radius: 3px;
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.2);
+            border-radius: 4px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
         }
-        .custom-scrollbar::-webkit-scrollbar-track {
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0,0,0,0.3);
+            background-clip: padding-box;
+        }
+        ::-webkit-scrollbar-track {
             background: transparent;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            background-clip: padding-box;
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.3);
+            background-clip: padding-box;
         }
         .no-scrollbar::-webkit-scrollbar {
             display: none;
