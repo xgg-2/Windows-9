@@ -51,11 +51,11 @@ cd windows-9
 
 Make sure Node.js is installed, then run:
 
-npm install
+```npm install```
 
 3. Run the Project
 
-npm run dev
+```npm run dev```
 
 The application will be available at:
 http://localhost:5173
