@@ -2,16 +2,20 @@ import React, { useState } from 'react';
 import { OSProvider } from './context/OSContext';
 import Desktop from './components/Desktop';
 import BootScreen from './components/BootScreen';
+import LockScreen from './components/LockScreen';
 
 const App: React.FC = () => {
   const [isBooted, setIsBooted] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(false);
 
   return (
     <OSProvider>
       <div className="w-full h-full text-sm antialiased text-gray-900">
         {!isBooted && <BootScreen onComplete={() => setIsBooted(true)} />}
-        {/* Render Desktop behind boot screen to pre-load images essentially, or just conditionally render */}
-        <Desktop />
+        {isBooted && !isUnlocked && <LockScreen onUnlock={() => setIsUnlocked(true)} />}
+        
+        {/* Render Desktop only when booted and unlocked */}
+        {isBooted && isUnlocked && <Desktop />}
       </div>
       
       <style>{`
