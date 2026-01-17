@@ -11,19 +11,28 @@ const Desktop: React.FC = () => {
   const { windows, launchApp, closeStartMenu, wallpaper, systemSettings } = useOS();
   const shortcuts: AppId[] = ['pc', 'browser', 'notepad', 'calc', 'settings', 'terminal', 'paint', 'sysinfo', 'worm'];
   
-  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; visible: boolean }>({ x: 0, y: 0, visible: false });
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; visible: boolean; submenu: string | null }>({ x: 0, y: 0, visible: false, submenu: null });
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
-    setContextMenu({ x: e.clientX, y: e.clientY, visible: true });
+    // Prevent overflow
+    const x = Math.min(e.clientX, window.innerWidth - 200);
+    const y = Math.min(e.clientY, window.innerHeight - 300);
+    setContextMenu({ x, y, visible: true, submenu: null });
     closeStartMenu();
   };
 
   const handleDesktopClick = () => {
     if (contextMenu.visible) {
-        setContextMenu({ ...contextMenu, visible: false });
+        setContextMenu({ ...contextMenu, visible: false, submenu: null });
     }
     closeStartMenu();
+  };
+
+  const handleRefresh = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Simulate refresh with a brief flicker or just closing menu
+    setContextMenu({ ...contextMenu, visible: false });
   };
 
   return (
@@ -80,39 +89,134 @@ const Desktop: React.FC = () => {
       {/* Context Menu */}
       {contextMenu.visible && (
         <div 
-            className="absolute bg-white/95 backdrop-blur shadow-lg border border-gray-200 rounded py-1 z-[6000] w-48 text-sm text-gray-800"
+            className="absolute bg-white/95 backdrop-blur shadow-xl border border-gray-300 rounded-sm py-1 z-[6000] w-56 text-sm text-gray-800 animate-popIn"
             style={{ top: contextMenu.y, left: contextMenu.x }}
+            onClick={(e) => e.stopPropagation()}
         >
-            <div className="px-4 py-1 hover:bg-blue-100 cursor-pointer flex justify-between items-center">
-                <span>View</span>
-                <i className="fas fa-chevron-right text-[10px] text-gray-500"></i>
+            <div 
+                className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-default flex justify-between items-center group relative"
+                onMouseEnter={() => setContextMenu(prev => ({ ...prev, submenu: 'view' }))}
+            >
+                <div className="flex items-center gap-2">
+                    <i className="far fa-eye w-4"></i>
+                    <span>View</span>
+                </div>
+                <i className="fas fa-chevron-right text-[10px] opacity-50 group-hover:opacity-100"></i>
+                
+                {contextMenu.submenu === 'view' && (
+                    <div className="absolute left-full top-0 ml-[1px] bg-white/95 backdrop-blur shadow-xl border border-gray-300 rounded-sm py-1 w-48 text-gray-800">
+                        <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white flex items-center gap-2">
+                             <i className="fas fa-check text-[10px] w-4"></i>
+                             <span>Large icons</span>
+                        </div>
+                        <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white flex items-center gap-2">
+                             <div className="w-4"></div>
+                             <span>Medium icons</span>
+                        </div>
+                        <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white flex items-center gap-2">
+                             <div className="w-4"></div>
+                             <span>Small icons</span>
+                        </div>
+                        <div className="border-t my-1 opacity-50"></div>
+                        <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white flex items-center gap-2">
+                             <i className="fas fa-check text-[10px] w-4"></i>
+                             <span>Auto arrange icons</span>
+                        </div>
+                    </div>
+                )}
             </div>
-            <div className="px-4 py-1 hover:bg-blue-100 cursor-pointer flex justify-between items-center">
-                <span>Sort by</span>
-                <i className="fas fa-chevron-right text-[10px] text-gray-500"></i>
+
+            <div 
+                className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-default flex justify-between items-center group relative"
+                onMouseEnter={() => setContextMenu(prev => ({ ...prev, submenu: 'sort' }))}
+            >
+                <div className="flex items-center gap-2">
+                    <i className="fas fa-sort-amount-down w-4"></i>
+                    <span>Sort by</span>
+                </div>
+                <i className="fas fa-chevron-right text-[10px] opacity-50 group-hover:opacity-100"></i>
+                
+                {contextMenu.submenu === 'sort' && (
+                    <div className="absolute left-full top-0 ml-[1px] bg-white/95 backdrop-blur shadow-xl border border-gray-300 rounded-sm py-1 w-40 text-gray-800">
+                        <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white">Name</div>
+                        <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white">Size</div>
+                        <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white">Item type</div>
+                        <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white">Date modified</div>
+                    </div>
+                )}
             </div>
-            <div className="px-4 py-1 hover:bg-blue-100 cursor-pointer" onClick={() => window.location.reload()}>Refresh</div>
-            <div className="border-t my-1"></div>
-            <div className="px-4 py-1 hover:bg-blue-100 cursor-pointer">Paste</div>
-            <div className="px-4 py-1 hover:bg-blue-100 cursor-pointer text-gray-400">Paste shortcut</div>
-            <div className="border-t my-1"></div>
-            <div className="px-4 py-1 hover:bg-blue-100 cursor-pointer flex justify-between items-center">
-                <span>New</span>
-                <i className="fas fa-chevron-right text-[10px] text-gray-500"></i>
+
+            <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-default flex items-center gap-2" onClick={handleRefresh}>
+                <i className="fas fa-sync-alt w-4"></i>
+                <span>Refresh</span>
             </div>
-            <div className="border-t my-1"></div>
-            <div className="px-4 py-1 hover:bg-blue-100 cursor-pointer flex items-center gap-2">
-                <i className="fas fa-desktop text-gray-500"></i>
+            
+            <div className="border-t my-1 opacity-50"></div>
+            
+            <div className="px-3 py-1.5 text-gray-400 cursor-default flex items-center gap-2">
+                <i className="fas fa-paste w-4"></i>
+                <span>Paste</span>
+            </div>
+            <div className="px-3 py-1.5 text-gray-400 cursor-default flex items-center gap-2">
+                <i className="fas fa-link w-4"></i>
+                <span>Paste shortcut</span>
+            </div>
+            
+            <div className="border-t my-1 opacity-50"></div>
+
+            <div 
+                className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-default flex justify-between items-center group relative"
+                onMouseEnter={() => setContextMenu(prev => ({ ...prev, submenu: 'new' }))}
+            >
+                <div className="flex items-center gap-2">
+                    <i className="fas fa-plus w-4"></i>
+                    <span>New</span>
+                </div>
+                <i className="fas fa-chevron-right text-[10px] opacity-50 group-hover:opacity-100"></i>
+                
+                {contextMenu.submenu === 'new' && (
+                    <div className="absolute left-full top-0 ml-[1px] bg-white/95 backdrop-blur shadow-xl border border-gray-300 rounded-sm py-1 w-48 text-gray-800">
+                        <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white flex items-center gap-2">
+                             <i className="fas fa-folder text-yellow-500 w-4"></i>
+                             <span>Folder</span>
+                        </div>
+                        <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white flex items-center gap-2">
+                             <i className="fas fa-link w-4"></i>
+                             <span>Shortcut</span>
+                        </div>
+                        <div className="border-t my-1 opacity-50"></div>
+                        <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white flex items-center gap-2">
+                             <i className="fas fa-file-alt text-gray-500 w-4"></i>
+                             <span>Text Document</span>
+                        </div>
+                        <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white flex items-center gap-2">
+                             <i className="fas fa-palette text-pink-500 w-4"></i>
+                             <span>Paint Drawing</span>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            <div className="border-t my-1 opacity-50"></div>
+
+            <div 
+                className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-default flex items-center gap-2"
+                onClick={() => {
+                    launchApp('settings');
+                    setContextMenu({ ...contextMenu, visible: false, submenu: null });
+                }}
+            >
+                <i className="fas fa-desktop w-4 opacity-70"></i>
                 <span>Display settings</span>
             </div>
             <div 
-                className="px-4 py-1 hover:bg-blue-100 cursor-pointer flex items-center gap-2"
+                className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-default flex items-center gap-2"
                 onClick={() => {
                     launchApp('settings');
-                    setContextMenu({ ...contextMenu, visible: false });
+                    setContextMenu({ ...contextMenu, visible: false, submenu: null });
                 }}
             >
-                <i className="fas fa-paint-brush text-gray-500"></i>
+                <i className="fas fa-paint-brush w-4 opacity-70"></i>
                 <span>Personalize</span>
             </div>
         </div>
