@@ -219,11 +219,11 @@ const Window: React.FC<WindowProps> = ({ windowState }) => {
             )}
           </button>
           <button
-            className={`w-10 h-full flex items-center justify-center hover:bg-[#e81123] hover:text-white transition ${!isMaximized ? 'rounded-tr-lg' : ''}`}
+            className={`w-12 h-full flex items-center justify-center hover:bg-[#e81123] hover:text-white transition group ${!isMaximized ? 'rounded-tr-lg' : ''}`}
             onClick={(e) => { e.stopPropagation(); closeWindow(id); }}
             title="Close"
           >
-            <i className="fas fa-times text-sm"></i>
+            <i className="fas fa-times text-[17px] mt-[1px]"></i>
           </button>
         </div>
       </div>
